@@ -1,3 +1,4 @@
+
 rule prepare_data_for_plot:
     input:
         SIZE_FILE=f"{config['BUILD_DIR']}/size",
@@ -6,18 +7,14 @@ rule prepare_data_for_plot:
         expand(
             f"{config['BUILD_DIR']}/prepared_{{format}}/{{key}}",
             format=["time", "size"],
-            key=["alpha", "hash", "kmer", "relaxed-fpr", "none", "U", "U+R"],
+            key=config["KEYS"],
         ),
     log:
         "log/prepare_data_for_plot.log",
     conda:
         "../envs/r_basic_env.yaml"
-    shell:
-        """
-        (echo "[$(date +"%Y-%m-%d %T")] Preparing size for plot."
-        Rscript extract_results.r {input.TIME_FILE} {input.SIZE_FILE}
-        ) &>> {log}
-        """
+    script:
+        "../extract_results.R"
 
 
 rule plot_data:
@@ -25,7 +22,7 @@ rule plot_data:
         expand(
             f"{config['BUILD_DIR']}/prepared_{{format}}/{{key}}",
             format=["time", "size"],
-            key=["alpha", "hash", "kmer", "relaxed-fpr", "none", "U", "U+R"],
+            key=config["KEYS"],
         ),
     output:
         f"{config['PLOT_DIR']}/index.html",

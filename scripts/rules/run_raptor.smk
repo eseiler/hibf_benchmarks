@@ -4,12 +4,14 @@ rule raptor_layout:
         LAYOUT_TIME=f"{config['BUILD_DIR']}/{{key}}={{param}}/layout.time",
     threads: config["NUM_THREADS"]
     priority: 2
+    message:
+        "Running raptor build for {wildcards.key}={wildcards.param}."
     log:
         "log/raptor_layout_{key}_{param}.log",
     conda:
         "../envs/raptor_env.yaml"
     script:
-        "raptor_layout.py",
+        "run_layout.py"
 
 
 rule raptor_build:

@@ -4,4 +4,4 @@ channels:
   - defaults
 dependencies:
   - bokeh=3.4.1
-  - bioconda::snakemake=8.4.2
+  - bioconda::snakemake=8.10.7

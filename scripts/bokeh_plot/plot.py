@@ -74,6 +74,8 @@ def create_plot():
             time_reader = csv.reader(timing_file, delimiter="\t")
             size_reader = csv.reader(size_file, delimiter="\t")
             time_data_list, size_data_list = list(time_reader), list(size_reader)
+            if len(time_data_list) == 0 or len(size_data_list) == 0:
+                continue
             time_data = convert_time_data(time_data_list, file_name, TIME_FORMAT)
             size_data = convert_size_data(size_data_list, file_name, SIZE_FORMAT)
             max_result_time = get_max_result(time_data_list[1:], 1.01)
