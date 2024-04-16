@@ -1,17 +1,20 @@
+def get_params():
+    result = []
+    result += [f"alpha={str(param).replace('.', '_')}" for param in config["PARAMS"]["ALPHA"]]
+    result += [f"{param1}={param2}" for param1 in config["PARAMS"]["MODE"] or config["DEFAULT_PARAMS"]["MODE"]
+                for param2 in config["PARAMS"]["T_MAX"] or config["DEFAULT_PARAMS"]["T_MAX"]]
+    result += [f"hash={param}" for param in config["PARAMS"]["NUM_HASHES"]]
+    result += [f"kmer={param}" for param in config["PARAMS"]["KMER_SIZE"]]
+    result += [f"relaxed-fpr={str(param).replace('.', '_')}" for param in config["PARAMS"]["RELAXED_FPR"]]
+    return result
+
+
 rule store_timings:
     input:
         files=expand(
-            f"{config['BUILD_DIR']}/{{param}}/out.time",
-            param=[f"alpha={str(param).replace('.', '_')}" for param in config["PARAMS"]["ALPHA"]]
-            + [
-                f"{param1}={param2}"
-                for param1 in config["PARAMS"]["MODE"] or config["DEFAULT_PARAMS"]["MODE"]
-                for param2 in config["PARAMS"]["T_MAX"] or config["DEFAULT_PARAMS"]["T_MAX"]
-            ]
-            + [f"hash={param}" for param in config["PARAMS"]["NUM_HASHES"] if param < 6]
-            + [f"kmer={param}" for param in config["PARAMS"]["KMER_SIZE"]]
-            + [f"relaxed-fpr={str(param).replace('.', '_')}" for param in config["PARAMS"]["RELAXED_FPR"]],
-        ),
+            f"{config['BUILD_DIR']}/{{param}}/out.sizes",
+            param=get_params(),
+        )
     output:
         f"{config['BUILD_DIR']}/time",
     log:
@@ -30,16 +33,8 @@ rule store_sizes:
     input:
         files=expand(
             f"{config['BUILD_DIR']}/{{param}}/out.sizes",
-            param=[f"alpha={str(param).replace('.', '_')}" for param in config["PARAMS"]["ALPHA"]]
-            + [
-                f"{param1}={param2}"
-                for param1 in config["PARAMS"]["MODE"] or config["DEFAULT_PARAMS"]["MODE"]
-                for param2 in config["PARAMS"]["T_MAX"] or config["DEFAULT_PARAMS"]["T_MAX"]
-            ]
-            + [f"hash={param}" for param in config["PARAMS"]["NUM_HASHES"]]
-            + [f"kmer={param}" for param in config["PARAMS"]["KMER_SIZE"]]
-            + [f"relaxed-fpr={str(param).replace('.', '_')}" for param in config["PARAMS"]["RELAXED_FPR"]],
-        ),
+            param=get_params(),
+        )
     output:
         f"{config['BUILD_DIR']}/size",
     log:
