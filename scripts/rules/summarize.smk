@@ -1,4 +1,4 @@
-def get_params():
+def get_params(constrained):
     result = []
     result += [f"alpha={str(param).replace('.', '_')}" for param in config["PARAMS"]["ALPHA"]]
     result += [
@@ -6,7 +6,10 @@ def get_params():
         for param1 in config["PARAMS"]["MODE"] or [config["DEFAULT_PARAMS"]["MODE"]]
         for param2 in config["PARAMS"]["T_MAX"] or [config["DEFAULT_PARAMS"]["T_MAX"]]
     ]
-    result += [f"hash={param}" for param in config["PARAMS"]["NUM_HASHES"]]
+    if (constrained):
+        result += [f"hash={param}" for param in config["PARAMS"]["NUM_HASHES"] if param < 6]
+    else:
+        result += [f"hash={param}" for param in config["PARAMS"]["NUM_HASHES"]]
     result += [f"kmer={param}" for param in config["PARAMS"]["KMER_SIZE"]]
     result += [f"relaxed-fpr={str(param).replace('.', '_')}" for param in config["PARAMS"]["RELAXED_FPR"]]
     return result
@@ -16,7 +19,7 @@ rule store_timings:
     input:
         files=expand(
             f"{config['BUILD_DIR']}/{{param}}/out.time",
-            param=get_params(),
+            param=get_params(True),
         ),
     output:
         f"{config['BUILD_DIR']}/time",
@@ -35,7 +38,7 @@ rule store_sizes:
     input:
         files=expand(
             f"{config['BUILD_DIR']}/{{param}}/out.sizes",
-            param=get_params(),
+            param=get_params(False)
         ),
     output:
         f"{config['BUILD_DIR']}/size",

@@ -13,10 +13,15 @@ rule raptor_layout:
     script:
         "run_layout.py"
 
+# def constrained(wildcards):
+#     if wildcards.key == "hash" and int(wildcards.param) > 5:
+#         return []
+#     return [f"{config['BUILD_DIR']}/{wildcards.key}={wildcards.param}/layout"]
+
 
 rule raptor_build:
     input:
-        LAYOUT_FILE=f"{config['BUILD_DIR']}/{{key}}={{param}}/layout",
+        f"{config['BUILD_DIR']}/{{key}}={{param}}/layout"
     output:
         INDEX_FILE=f"{config['BUILD_DIR']}/{{key}}={{param}}/index",
         INDEX_TIME=f"{config['BUILD_DIR']}/{{key}}={{param}}/index.time",
@@ -33,7 +38,7 @@ rule raptor_build:
         """
     (echo "[$(date +"%Y-%m-%d %T")] Running raptor build for {wildcards.key}={wildcards.param}."
     {params.RAPTOR_BINARY} build \
-      --input {input.LAYOUT_FILE} \
+      --input {input} \
       --output {output.INDEX_FILE} \
       --window {params.WINDOW_SIZE} \
       --quiet \

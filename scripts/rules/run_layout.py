@@ -6,7 +6,7 @@ kmer_size = (
     snakemake.wildcards.param if snakemake.wildcards.key == "kmer" else snakemake.config["DEFAULT_PARAMS"]["KMER_SIZE"]
 )
 mode = (
-    snakemake.wildcards.param
+    snakemake.wildcards.key
     if snakemake.wildcards.key in ["U+R", "U", "none"]
     else snakemake.config["DEFAULT_PARAMS"]["MODE"]
 )
@@ -16,16 +16,16 @@ t_max = (
     else snakemake.config["DEFAULT_PARAMS"]["T_MAX"]
 )
 num_hash = (
-    snakemake.wildcards.param
-    if snakemake.wildcards.key == "r-relaxed"
-    else snakemake.config["DEFAULT_PARAMS"]["NUM_HASHES"]
+    snakemake.wildcards.param if snakemake.wildcards.key == "hash" else snakemake.config["DEFAULT_PARAMS"]["NUM_HASHES"]
 )
 relaxed_fpr = (
-    snakemake.wildcards.param if snakemake.wildcards.key == "kmer" else snakemake.config["DEFAULT_PARAMS"]["R_FPR"]
+    snakemake.wildcards.param.replace("_", ".")
+    if snakemake.wildcards.key == "r-relaxed"
+    else snakemake.config["DEFAULT_PARAMS"]["R_FPR"]
 )
 alpha = (
     snakemake.wildcards.param.replace("_", ".")
-    if snakemake.wildcards.key == "kmer"
+    if snakemake.wildcards.key == "alpha"
     else snakemake.config["DEFAULT_PARAMS"]["ALPHA"]
 )
 command = f"""{snakemake.config['RAPTOR_BINARY']} layout \
